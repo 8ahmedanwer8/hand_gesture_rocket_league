@@ -9,3 +9,5 @@ The gesture_initiator file deals with MediaPipe and OpenCV detection of the hand
 
 Lastly, I used threads where each thread was responsible for one or more keyboard press. I chose this for two reasons. One is that it may help with higher FPS for OpenCV and faster key response time (I don't think it did...). Two is that in a video game, you will be pressing more than one button at a time at some point; so using threads is one way to allow different key presses performed simultaneously. 
 
+# What's next?
+Maybe turning the entire game of rocket league (or other games) fully controllable with body gestures. This would be a fun and whacky thing to try and defintely calorie-burning.
