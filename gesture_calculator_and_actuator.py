@@ -1,5 +1,6 @@
 import cv2
 import time 
+import math
 import gesture_initiator as gi
 from threading import Thread
 
@@ -8,15 +9,20 @@ from pynput.keyboard import Key, Controller
 keyboard = Controller()
 thumb_tip = 4 
 
+thumb_tip = 4 
 index_finger_tip = 8
 middle_finger_tip = 12 
 ring_finger_tip = 16	
 pinky_tip = 20
 
+# thumb_cmc = 1
 index_finger_dip = 7
 middle_finger_dip = 11
 ring_finger_dip = 15
 pinky_dip = 19
+
+wrist = 0 
+index_finger_mcp = 5
 
 class gesture_finder():
 	def __init__(self, thumb_tip = 4, index_finger_tip = 8, middle_finger_tip = 12, ring_finger_tip = 16,	
@@ -35,6 +41,14 @@ class gesture_finder():
 		sign = "UNDEFINED"
 		checkmark_high_five = 0
 		if len(lm_list) != 0:
+			thumb_to_knuckles = math.hypot(lm_list[thumb_tip][1] - lm_list[index_finger_mcp][1],
+				lm_list[thumb_tip][2] - lm_list[index_finger_mcp][2])
+			index_to_ring = math.hypot(lm_list[index_finger_tip][1] - lm_list[ring_finger_tip][1],
+				lm_list[index_finger_tip][2] - lm_list[ring_finger_tip][2])
+			
+			if thumb_to_knuckles > index_to_ring:
+					checkmark_high_five = checkmark_high_five - 1
+
 			if lm_list[thumb_tip][1] < lm_list[index_finger_tip][1]:
 				if lm_list[thumb_tip][2] > lm_list[index_finger_tip][2]:
 					checkmark_high_five = checkmark_high_five + 1
@@ -66,6 +80,15 @@ class gesture_finder():
 				checkmark_fist = checkmark_fist + 1		
 			if lm_list[pinky_dip][2] < lm_list[pinky_tip][2]:
 				checkmark_fist = checkmark_fist + 1		
+
+			thumb_to_knuckles = math.hypot(lm_list[thumb_tip][1] - lm_list[index_finger_mcp][1],
+				lm_list[thumb_tip][2] - lm_list[index_finger_mcp][2])
+			index_to_ring = math.hypot(lm_list[index_finger_tip][1] - lm_list[ring_finger_tip][1],
+				lm_list[index_finger_tip][2] - lm_list[ring_finger_tip][2])
+
+
+			if thumb_to_knuckles > index_to_ring:
+					checkmark_fist = checkmark_fist - 1
 			
 		if checkmark_fist == 4:
 			sign = "FIST"
@@ -76,44 +99,33 @@ class gesture_finder():
 		else:
 			pass
 
-	def find_lateral(self, lm_list):
-		sign = "UNDEFINED"
-		checkmark_lateral = 0
-		
-		if len(lm_list) != 0:
-			if lm_list[thumb_tip][1] < lm_list[pinky_tip][1]:
-				sign = "LEFT"
-				print("LEFT")
-				keyboard.press('a')
-				time.sleep(0.1)
-				keyboard.release('a')		
-
-			if lm_list[thumb_tip][1] > lm_list[pinky_tip][1]:
-				sign = "RIGHT"
-				print("RIGHT")
-				keyboard.press('d')
-				time.sleep(0.1)
-				keyboard.release('d')
-
-			else:
-				sign = "STRAIGHT"
-				print("STRAIGHT")
-				time.sleep(3)
-
 
 
 	def find_left(self, lm_list):
 		sign = "UNDEFINED"
 		checkmark_left = 0
 		if len(lm_list) != 0:
+			if lm_list[index_finger_dip][2] < lm_list[index_finger_tip][2]:
+				checkmark_left = checkmark_left + 1
+			if lm_list[ring_finger_dip][2] < lm_list[ring_finger_tip][2]:
+				checkmark_left = checkmark_left + 1
+
 			if lm_list[thumb_tip][1] < lm_list[pinky_tip][1]:
 				checkmark_left = checkmark_left + 1	
+
+			thumb_to_knuckles = math.hypot(lm_list[thumb_tip][1] - lm_list[index_finger_mcp][1],
+				lm_list[thumb_tip][2] - lm_list[index_finger_mcp][2])
+			index_to_ring = math.hypot(lm_list[index_finger_tip][1] - lm_list[ring_finger_tip][1],
+				lm_list[index_finger_tip][2] - lm_list[ring_finger_tip][2])
+
+			if thumb_to_knuckles > index_to_ring:
+					checkmark_left = checkmark_left + 1
 			
-		if checkmark_left == 1:
+		if checkmark_left == 4:
 			sign = "LEFT"
 			print("LEFT", checkmark_left)
 			keyboard.press('a')
-			time.sleep(0.1)
+			time.sleep(0.5)
 			keyboard.release('a')
 		else:
 			pass
@@ -124,32 +136,26 @@ class gesture_finder():
 		if len(lm_list) != 0:
 			if lm_list[thumb_tip][1] > lm_list[pinky_tip][1]:
 				checkmark_right = checkmark_right + 1	
-			
-		if checkmark_right == 1:
+
+			if lm_list[index_finger_dip][2] < lm_list[index_finger_tip][2]:
+				checkmark_right = checkmark_right + 1
+			if lm_list[ring_finger_dip][2] < lm_list[ring_finger_tip][2]:
+				checkmark_right = checkmark_right + 1
+
+			thumb_to_knuckles = math.hypot(lm_list[thumb_tip][1] - lm_list[index_finger_mcp][1],
+				lm_list[thumb_tip][2] - lm_list[index_finger_mcp][2])
+			index_to_ring = math.hypot(lm_list[index_finger_tip][1] - lm_list[ring_finger_tip][1],
+				lm_list[index_finger_tip][2] - lm_list[ring_finger_tip][2])
+
+			if thumb_to_knuckles > index_to_ring:
+					checkmark_right = checkmark_right + 1
+
+		if checkmark_right == 4:
 			sign = "RIGHT"
 			print("RIGHT", checkmark_right)
 			keyboard.press('d')
-			time.sleep(0.1)
+			time.sleep(0.5)
 			keyboard.release('d')
-		else:
-			pass	
-
-	def find_straight(self, lm_list):
-		sign = "UNDEFINED"
-		checkmark_straight = 0
-		if len(lm_list) != 0:
-			if lm_list[index_finger_dip][2] < lm_list[index_finger_tip][2]:
-				checkmark_straight = checkmark_straight + 1
-			if lm_list[middle_finger_dip][2] < lm_list[middle_finger_tip][2]:
-				checkmark_straight = checkmark_straight + 1
-			if lm_list[ring_finger_dip][2] < lm_list[ring_finger_tip][2]:
-				checkmark_straight = checkmark_straight + 1		
-			if lm_list[pinky_dip][2] < lm_list[pinky_tip][2]:
-				checkmark_straight = checkmark_straight + 1		
-			
-		if checkmark_straight == 4:
-			sign = "STRAIGHT"
-			print("STRAIGHT", checkmark_straight)
 		else:
 			pass
 
@@ -158,6 +164,7 @@ def main():
 	timeC = 0 
 	cap = cv2.VideoCapture(0)
 
+
 	def lm_each_hand(lst):
 		if len(lst) == 42:
 			lst_0 = []
@@ -165,12 +172,15 @@ def main():
 			lst_0.append(lst[0:21])
 			lst_1.append(lst[21:])
 			return lst_0, lst_1
+ 	
 
+	
 	while True:
 		success, img = cap.read()
 		detector = gi.hand_detector()
 		finder = gesture_finder()
 		img = detector.img_function(img)
+
 
 		lm_list = detector.find_hand(img)
 		result = lm_each_hand(lm_list)
@@ -185,26 +195,21 @@ def main():
 		# 		print("either hand", lm_list[0])
 
 		try:
+
 			high_five_thread = Thread(target = finder.find_high_five, args = (result[0][0],))
 			fist_thread = Thread(target = finder.find_fist, args = (result[0][0],))
-			lateral_thread = Thread(target = finder.find_lateral, args = (result[1][0],))
-			# left_thread = Thread(target = finder.find_left, args = (result[1][0],))
-			# right_thread = Thread(target = finder.find_right, args = (result[1][0],))
-			# straight_thread = Thread(target = finder.find_straight, args = (result[1][0],))
+			left_thread = Thread(target = finder.find_left, args = (result[1][0],))
+			right_thread = Thread(target = finder.find_right, args = (result[1][0],))
 
 			high_five_thread.daemon = True
 			fist_thread.daemon = True
-			lateral_thread.daemon = True
-			# left_thread.daemon = True
-			# right_thread.daemon = True
-			# straight_thread.daemon = True
+			left_thread.daemon = True
+			right_thread.daemon = True
 
 			high_five_thread.start()
 			fist_thread.start()
-			lateral_thread.start()
-			# left_thread.start()
-			# right_thread.start()
-			# straight_thread.start()
+			left_thread.start()
+			right_thread.start()
 
 		except:
 			print("Put both hands up at the camera")
