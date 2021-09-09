@@ -10,7 +10,7 @@ You make a high five gesture with one hand and fist with the same hand to move f
 This code is far from perfect and I hope I can find ways to optimize it later. When I ran the program, not only were the OpenCV FPS dropping but Rocket League was also slowing down along with my computer. Having the program on longer made it slower and slower. Of course with the code itself, there is the inaccuracy with the gesture detecting as well. The biggest trouble is not being able to test the program properly when it begins to hog your RAM 50 seconds in
 
 ## Files
-The gesture_initiator.py is the library I wrote for initializing MediaPipe and OpenCV and returning location of landmarks from both hands. gesture_calculator_and_actuator.py loosely classifies these hands into pre-defined gestures and sends keyboard presses using threads. 
+The gesture_initiator.py is the module I wrote for initializing and abstracting MediaPipe and OpenCV methods which return location of landmarks from both hands. gesture_calculator_and_actuator.py classifies these hands into pre-defined gestures by calculating the position of landmarks and algorithmically checking if they classify as the pre-defined gestures. Finally, the recognized gestures send keyboard presses using threads. 
 
 I used threads where each thread was responsible for one or more keyboard press. I chose this for two reasons. One is that it may help with higher FPS for OpenCV and faster key response time (I don't think it did...). Two is that in a video game, you will be pressing more than one button at a time at some point; so using threads is one way to allow different key presses performed simultaneously. That being said, threads actually for some reason made my gesture detecting more inaccurate.
 
